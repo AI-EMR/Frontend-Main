@@ -1,7 +1,7 @@
 import useAuthStore from '../store/authStore';
 
 // Base API URL - replace with your actual API URL when backend is ready
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://api.aiemr.example.com/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.aiemr.example.com/v1';
 
 /**
  * API client for making authenticated requests to the backend
