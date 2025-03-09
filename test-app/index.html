@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIEMR Test</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script>
+    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+  <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 max-w-md w-full">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+      AIEMR Test Page
+    </h1>
+    <p class="text-gray-600 dark:text-gray-300 mb-6">
+      This is a test page to verify that Tailwind CSS is working correctly.
+    </p>
+    
+    <div class="space-y-4">
+      <div class="p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
+        <h2 class="font-medium text-blue-800 dark:text-blue-200">Information</h2>
+        <p class="text-blue-700 dark:text-blue-300 text-sm mt-1">
+          The application is currently in test mode.
+        </p>
+      </div>
+      
+      <div class="p-4 bg-primary-50 dark:bg-primary-900 rounded-lg">
+        <h2 class="font-medium text-primary-800 dark:text-primary-200">Primary Colors</h2>
+        <p class="text-primary-700 dark:text-primary-300 text-sm mt-1">
+          Testing primary color palette.
+        </p>
+      </div>
+    </div>
+    
+    <button 
+      class="mt-6 w-full px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+      onclick="toggleTheme()"
+    >
+      Toggle Theme
+    </button>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', !isDark);
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+  </script>
+</body>
+</html> 
