@@ -8,6 +8,7 @@ export const ROLES = {
   DOCTOR: 'doctor',
   NURSE: 'nurse',
   RECEPTIONIST: 'receptionist',
+  PHARMACIST: 'pharmacist',
   PATIENT: 'patient',
 };
 
@@ -30,6 +31,7 @@ export const PERMISSIONS = {
     'edit_medical_records',
     'prescribe_medication',
     'view_limited_analytics',
+    'send_pharmacy_messages',
   ],
   [ROLES.NURSE]: [
     'view_assigned_patients',
@@ -37,6 +39,13 @@ export const PERMISSIONS = {
     'view_medical_records',
     'update_medical_records',
     'administer_medication',
+  ],
+  [ROLES.PHARMACIST]: [
+    'view_prescriptions',
+    'manage_pharmacy_inventory',
+    'process_prescriptions',
+    'view_pharmacy_messages',
+    'send_pharmacy_messages',
   ],
   [ROLES.RECEPTIONIST]: [
     'view_patient_info',

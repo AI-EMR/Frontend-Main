@@ -5,7 +5,7 @@ import useAuthStore from '../store/authStore';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const login = useAuthStore(state => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [showDemoCredentials, setShowDemoCredentials] = useState(false);
   const [formData, setFormData] = useState({
@@ -14,13 +14,14 @@ const LoginPage = () => {
     rememberMe: false,
   });
 
-  const demoCredentials = [
-    { role: 'Admin', email: 'admin@example.com', password: 'admin123' },
-    { role: 'Doctor', email: 'doctor@example.com', password: 'doctor123' },
-    { role: 'Nurse', email: 'nurse@example.com', password: 'nurse123' },
-    { role: 'Receptionist', email: 'receptionist@example.com', password: 'reception123' },
-    { role: 'Patient', email: 'patient@example.com', password: 'patient123' },
-  ];
+  const demoCredentials = {
+    admin: { email: 'admin@example.com', password: 'admin123' },
+    doctor: { email: 'doctor@example.com', password: 'doctor123' },
+    nurse: { email: 'nurse@example.com', password: 'nurse123' },
+    pharmacist: { email: 'pharmacist@example.com', password: 'pharm123' },
+    receptionist: { email: 'receptionist@example.com', password: 'reception123' },
+    patient: { email: 'patient@example.com', password: 'patient123' },
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -35,17 +36,34 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call
-      await login({
-        email: formData.email,
-        password: formData.password,
-        rememberMe: formData.rememberMe,
-      });
-
-      toast.success('Login successful!');
-      navigate('/');
+      const result = await login(formData);
+      if (result.success) {
+        toast.success('Login successful!');
+        navigate('/');
+      } else {
+        toast.error(result.error || 'Login failed');
+      }
     } catch (error) {
-      toast.error(error.message || 'Failed to login');
+      toast.error(error.message || 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async (role) => {
+    setIsLoading(true);
+    const credentials = demoCredentials[role];
+
+    try {
+      const result = await login(credentials);
+      if (result.success) {
+        toast.success('Demo login successful!');
+        navigate('/');
+      } else {
+        toast.error(result.error || 'Demo login failed');
+      }
+    } catch (error) {
+      toast.error(error.message || 'An error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -148,6 +166,70 @@ const LoginPage = () => {
         </div>
       </div>
 
+      <div className="mt-6">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+              Demo accounts
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('admin')}
+            disabled={isLoading}
+            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
+          >
+            Admin Demo
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('doctor')}
+            disabled={isLoading}
+            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
+          >
+            Doctor Demo
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('nurse')}
+            disabled={isLoading}
+            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
+          >
+            Nurse Demo
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('pharmacist')}
+            disabled={isLoading}
+            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
+          >
+            Pharmacist Demo
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('receptionist')}
+            disabled={isLoading}
+            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
+          >
+            Receptionist Demo
+          </button>
+          <button
+            type="button"
+            onClick={() => handleDemoLogin('patient')}
+            disabled={isLoading}
+            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 dark:focus:ring-offset-gray-900"
+          >
+            Patient Demo
+          </button>
+        </div>
+      </div>
+
       {/* Demo Credentials Floating Button */}
       <div className="fixed bottom-4 right-4 z-50">
         <button
@@ -176,11 +258,11 @@ const LoginPage = () => {
               </button>
             </div>
             <div className="space-y-3 max-h-80 overflow-y-auto">
-              {demoCredentials.map((cred, index) => (
-                <div key={index} className="p-2 border border-gray-200 dark:border-gray-700 rounded-md">
+              {Object.entries(demoCredentials).map(([role, cred]) => (
+                <div key={role} className="p-2 border border-gray-200 dark:border-gray-700 rounded-md">
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{cred.role}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{role.charAt(0).toUpperCase() + role.slice(1)}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">Email: {cred.email}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">Password: {cred.password}</p>
                     </div>

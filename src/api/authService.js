@@ -15,7 +15,114 @@ const authService = {
    */
   login: async (credentials) => {
     if (USE_MOCK_API) {
-      return mockApi.login(credentials);
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Mock credentials check
+      const mockUsers = {
+        admin: {
+          id: 1,
+          name: 'Admin User',
+          email: 'admin@example.com',
+          password: 'admin123',
+          role: 'admin',
+          permissions: [
+            'view_all_patients',
+            'edit_all_patients',
+            'view_all_records',
+            'edit_all_records',
+            'manage_users',
+            'view_analytics',
+            'manage_system',
+          ],
+        },
+        doctor: {
+          id: 2,
+          name: 'Doctor User',
+          email: 'doctor@example.com',
+          password: 'doctor123',
+          role: 'doctor',
+          permissions: [
+            'view_assigned_patients',
+            'edit_assigned_patients',
+            'view_medical_records',
+            'create_medical_records',
+            'edit_medical_records',
+            'prescribe_medication',
+            'view_limited_analytics',
+            'send_pharmacy_messages',
+          ],
+        },
+        nurse: {
+          id: 3,
+          name: 'Nurse User',
+          email: 'nurse@example.com',
+          password: 'nurse123',
+          role: 'nurse',
+          permissions: [
+            'view_assigned_patients',
+            'update_vitals',
+            'view_medical_records',
+            'update_medical_records',
+            'administer_medication',
+          ],
+        },
+        pharmacist: {
+          id: 4,
+          name: 'Pharmacist User',
+          email: 'pharmacist@example.com',
+          password: 'pharm123',
+          role: 'pharmacist',
+          permissions: [
+            'view_prescriptions',
+            'manage_pharmacy_inventory',
+            'process_prescriptions',
+            'view_pharmacy_messages',
+            'send_pharmacy_messages',
+            'communicate_with_patients',
+          ],
+        },
+        receptionist: {
+          id: 5,
+          name: 'Receptionist User',
+          email: 'receptionist@example.com',
+          password: 'reception123',
+          role: 'receptionist',
+          permissions: [
+            'view_patient_info',
+            'register_patients',
+            'schedule_appointments',
+            'manage_billing',
+          ],
+        },
+        patient: {
+          id: 6,
+          name: 'Patient User',
+          email: 'patient@example.com',
+          password: 'patient123',
+          role: 'patient',
+          permissions: [
+            'view_own_records',
+            'view_appointments',
+            'request_appointments',
+            'communicate_with_pharmacy',
+          ],
+        },
+      };
+
+      // Find user by email
+      const user = Object.values(mockUsers).find(u => u.email === credentials.email);
+      
+      if (user && user.password === credentials.password) {
+        const { password, ...userWithoutPassword } = user;
+        return {
+          user: userWithoutPassword,
+          token: 'mock-jwt-token',
+          permissions: user.permissions,
+        };
+      }
+
+      throw new Error('Invalid credentials');
     }
     
     return apiClient.post('/auth/login', credentials);
@@ -28,12 +135,11 @@ const authService = {
    */
   register: async (userData) => {
     if (USE_MOCK_API) {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Simulate successful registration
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Mock registration success
       return {
-        success: true,
         message: 'Registration successful. Please check your email for verification.',
       };
     }
@@ -48,19 +154,11 @@ const authService = {
    */
   verifyEmail: async (data) => {
     if (USE_MOCK_API) {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Simulate successful verification
-      // In a real app, you'd validate the OTP
-      if (data.otp === '123456') {
-        return {
-          success: true,
-          message: 'Email verified successfully.',
-        };
-      } else {
-        throw new Error('Invalid verification code.');
-      }
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return {
+        message: 'Email verified successfully',
+      };
     }
     
     return apiClient.post('/auth/verify-email', data);
@@ -113,13 +211,10 @@ const authService = {
    */
   resetPassword: async (data) => {
     if (USE_MOCK_API) {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Simulate successful reset
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
       return {
-        success: true,
-        message: 'Password reset successful.',
+        message: 'Password reset instructions sent to your email',
       };
     }
     
@@ -132,8 +227,9 @@ const authService = {
    */
   logout: async () => {
     if (USE_MOCK_API) {
-      // No need to do anything for mock logout
-      return { success: true };
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return true;
     }
     
     return apiClient.post('/auth/logout');
