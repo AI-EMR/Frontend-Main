@@ -9,6 +9,7 @@ import useAuthStore from './store/authStore';
 // Components
 import ThemeToggle from './components/ui/ThemeToggle';
 import Sidebar from './components/ui/Sidebar';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages
 import DashboardPage from './pages/DashboardPage';
@@ -25,6 +26,8 @@ import AppointmentsPage from './pages/AppointmentsPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import OrganizationSettingsPage from './pages/OrganizationSettingsPage';
 import SystemSettingsPage from './pages/SystemSettingsPage';
+import LaboratoryPage from './pages/LaboratoryPage';
+import PharmacyPage from './pages/PharmacyPage';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -65,74 +68,48 @@ class ErrorBoundary extends React.Component {
 
 // Main layout component
 function MainLayout({ children }) {
-  const { user, role, logout } = useAuthStore();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user, logout } = useAuthStore();
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-soft">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Sidebar */}
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="bg-white dark:bg-gray-800 shadow-sm">
+          <div className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             <div className="flex items-center">
               <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                onClick={toggleSidebar}
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:text-gray-600 dark:focus:text-gray-300"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
-              <div className="text-xl font-display font-bold text-primary-600 ml-2 lg:ml-0 tracking-tight">AIEMR</div>
+              <h1 className="ml-4 text-xl font-display font-bold tracking-tight text-gray-900 dark:text-white">AIEMR</h1>
             </div>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
               <button
                 onClick={logout}
-                className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 font-display"
+                className="font-display text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
               >
                 Sign out
               </button>
             </div>
           </div>
-        </div>
-      </header>
-
-      <div className="flex">
-        {/* Sidebar for mobile */}
-        <div className={`fixed inset-0 lg:hidden z-40 transition-opacity duration-300 ${
-          sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}>
-          <div className="absolute inset-0 bg-gray-600 opacity-75" onClick={() => setSidebarOpen(false)} />
-          <div className={`relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-gray-800 transform transition-transform duration-300 ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}>
-            <div className="absolute top-0 right-0 -mr-12 pt-2">
-              <button
-                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <span className="sr-only">Close sidebar</span>
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <Sidebar />
-          </div>
-        </div>
-
-        {/* Static sidebar for desktop */}
-        <div className="hidden lg:flex lg:flex-shrink-0">
-          <Sidebar />
-        </div>
+        </header>
 
         {/* Main content */}
-        <div className="flex-1">
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {children}
-          </main>
-        </div>
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+          {children}
+        </main>
       </div>
     </div>
   );
@@ -183,129 +160,25 @@ function App() {
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
           
           {/* Protected routes */}
-          <Route
-            path="/"
-            element={
-              isAuthenticated ? (
-                <MainLayout>
-                  <DashboardPage />
-                </MainLayout>
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          
-          {/* Admin only routes */}
-          <Route
-            path="/staff"
-            element={
-              isAuthenticated ? (
-                role === 'admin' ? (
-                  <MainLayout>
-                    <StaffManagementPage />
-                  </MainLayout>
-                ) : (
-                  <Navigate to="/unauthorized" />
-                )
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          
-          <Route
-            path="/patients"
-            element={
-              isAuthenticated ? (
-                <MainLayout>
-                  <PatientsPage />
-                </MainLayout>
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          
-          <Route
-            path="/records"
-            element={
-              isAuthenticated ? (
-                <MainLayout>
-                  <RecordsPage />
-                </MainLayout>
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          
-          <Route
-            path="/appointments"
-            element={
-              isAuthenticated ? (
-                <MainLayout>
-                  <AppointmentsPage />
-                </MainLayout>
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          
-          <Route
-            path="/analytics"
-            element={
-              isAuthenticated ? (
-                <MainLayout>
-                  <AnalyticsPage />
-                </MainLayout>
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          
-          <Route
-            path="/settings/organization"
-            element={
-              isAuthenticated ? (
-                role === 'admin' ? (
-                  <MainLayout>
-                    <OrganizationSettingsPage />
-                  </MainLayout>
-                ) : (
-                  <Navigate to="/unauthorized" />
-                )
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
-          
-          <Route
-            path="/settings/system"
-            element={
-              isAuthenticated ? (
-                role === 'admin' ? (
-                  <MainLayout>
-                    <SystemSettingsPage />
-                  </MainLayout>
-                ) : (
-                  <Navigate to="/unauthorized" />
-                )
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
-          />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<MainLayout><DashboardPage /></MainLayout>} />
+            <Route path="/patients" element={<MainLayout><PatientsPage /></MainLayout>} />
+            <Route path="/records" element={<MainLayout><RecordsPage /></MainLayout>} />
+            <Route path="/appointments" element={<MainLayout><AppointmentsPage /></MainLayout>} />
+            <Route path="/analytics" element={<MainLayout><AnalyticsPage /></MainLayout>} />
+            <Route path="/staff" element={<MainLayout><StaffManagementPage /></MainLayout>} />
+            <Route path="/laboratory" element={<MainLayout><LaboratoryPage /></MainLayout>} />
+            <Route path="/pharmacy" element={<MainLayout><PharmacyPage /></MainLayout>} />
+            <Route path="/organization-settings" element={<MainLayout><OrganizationSettingsPage /></MainLayout>} />
+            <Route path="/system-settings" element={<MainLayout><SystemSettingsPage /></MainLayout>} />
+          </Route>
           
           {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         
         {/* Toast notifications */}
-        <ToastContainer position="top-right" autoClose={5000} />
+        <ToastContainer position="bottom-right" />
       </Router>
     </ErrorBoundary>
   );

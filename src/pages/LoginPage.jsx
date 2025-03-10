@@ -5,7 +5,7 @@ import useAuthStore from '../store/authStore';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const login = useAuthStore(state => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [showDemoCredentials, setShowDemoCredentials] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,17 +35,36 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Replace with actual API call
-      await login({
-        email: formData.email,
-        password: formData.password,
-        rememberMe: formData.rememberMe,
-      });
-
-      toast.success('Login successful!');
-      navigate('/');
+      const result = await login(formData);
+      if (result.success) {
+        toast.success('Login successful!');
+        navigate('/');
+      } else {
+        toast.error(result.error || 'Login failed');
+      }
     } catch (error) {
-      toast.error(error.message || 'Failed to login');
+      toast.error(error.message || 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async (role) => {
+    setIsLoading(true);
+    const credentials = role === 'admin' 
+      ? { email: 'admin@example.com', password: 'admin123' }
+      : { email: 'doctor@example.com', password: 'doctor123' };
+
+    try {
+      const result = await login(credentials);
+      if (result.success) {
+        toast.success('Demo login successful!');
+        navigate('/');
+      } else {
+        toast.error(result.error || 'Demo login failed');
+      }
+    } catch (error) {
+      toast.error(error.message || 'An error occurred');
     } finally {
       setIsLoading(false);
     }
