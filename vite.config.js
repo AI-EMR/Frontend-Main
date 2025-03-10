@@ -16,8 +16,12 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
-    host: true, // Listen on all addresses
+    port: 5173, // Default Vite port for local development
+    host: process.env.NODE_ENV === 'production' ? true : false, // Only listen on all addresses in production
+  },
+  preview: {
+    port: process.env.PORT || 4173,
+    host: '0.0.0.0', // For Render deployment
   },
   // Ensure proper handling of environment variables
   define: {
