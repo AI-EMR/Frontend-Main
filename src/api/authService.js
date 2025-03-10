@@ -19,15 +19,13 @@ const authService = {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // Mock credentials check
-      if (credentials.email === 'admin@example.com' && credentials.password === 'admin123') {
-        return {
-          user: {
-            id: 1,
-            name: 'Admin User',
-            email: 'admin@example.com',
-            role: 'admin',
-          },
-          token: 'mock-jwt-token',
+      const mockUsers = {
+        admin: {
+          id: 1,
+          name: 'Admin User',
+          email: 'admin@example.com',
+          password: 'admin123',
+          role: 'admin',
           permissions: [
             'view_all_patients',
             'edit_all_patients',
@@ -37,18 +35,13 @@ const authService = {
             'view_analytics',
             'manage_system',
           ],
-        };
-      }
-
-      if (credentials.email === 'doctor@example.com' && credentials.password === 'doctor123') {
-        return {
-          user: {
-            id: 2,
-            name: 'Doctor User',
-            email: 'doctor@example.com',
-            role: 'doctor',
-          },
-          token: 'mock-jwt-token',
+        },
+        doctor: {
+          id: 2,
+          name: 'Doctor User',
+          email: 'doctor@example.com',
+          password: 'doctor123',
+          role: 'doctor',
           permissions: [
             'view_assigned_patients',
             'edit_assigned_patients',
@@ -57,7 +50,75 @@ const authService = {
             'edit_medical_records',
             'prescribe_medication',
             'view_limited_analytics',
+            'send_pharmacy_messages',
           ],
+        },
+        nurse: {
+          id: 3,
+          name: 'Nurse User',
+          email: 'nurse@example.com',
+          password: 'nurse123',
+          role: 'nurse',
+          permissions: [
+            'view_assigned_patients',
+            'update_vitals',
+            'view_medical_records',
+            'update_medical_records',
+            'administer_medication',
+          ],
+        },
+        pharmacist: {
+          id: 4,
+          name: 'Pharmacist User',
+          email: 'pharmacist@example.com',
+          password: 'pharm123',
+          role: 'pharmacist',
+          permissions: [
+            'view_prescriptions',
+            'manage_pharmacy_inventory',
+            'process_prescriptions',
+            'view_pharmacy_messages',
+            'send_pharmacy_messages',
+            'communicate_with_patients',
+          ],
+        },
+        receptionist: {
+          id: 5,
+          name: 'Receptionist User',
+          email: 'receptionist@example.com',
+          password: 'reception123',
+          role: 'receptionist',
+          permissions: [
+            'view_patient_info',
+            'register_patients',
+            'schedule_appointments',
+            'manage_billing',
+          ],
+        },
+        patient: {
+          id: 6,
+          name: 'Patient User',
+          email: 'patient@example.com',
+          password: 'patient123',
+          role: 'patient',
+          permissions: [
+            'view_own_records',
+            'view_appointments',
+            'request_appointments',
+            'communicate_with_pharmacy',
+          ],
+        },
+      };
+
+      // Find user by email
+      const user = Object.values(mockUsers).find(u => u.email === credentials.email);
+      
+      if (user && user.password === credentials.password) {
+        const { password, ...userWithoutPassword } = user;
+        return {
+          user: userWithoutPassword,
+          token: 'mock-jwt-token',
+          permissions: user.permissions,
         };
       }
 
