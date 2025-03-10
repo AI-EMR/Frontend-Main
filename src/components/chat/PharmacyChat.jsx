@@ -82,7 +82,6 @@ const PharmacyChat = ({ prescriptionId, channel = 'doctor' }) => {
 
     setIsProcessing(true);
     try {
-      // Mock API call - replace with actual API integration
       const message = {
         id: Date.now(),
         sender: user.name,
@@ -125,9 +124,11 @@ const PharmacyChat = ({ prescriptionId, channel = 'doctor' }) => {
     <div className="flex flex-col h-full bg-white dark:bg-gray-800 rounded-lg shadow-sm">
       {/* Chat Header */}
       <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-display font-semibold text-gray-900 dark:text-white">
-          Pharmacy Communication
-        </h3>
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-display font-semibold text-gray-900 dark:text-white">
+            Pharmacy Communication
+          </h3>
+        </div>
         <div className="mt-2 flex space-x-2">
           {availableChannels.map((channelName) => (
             <button

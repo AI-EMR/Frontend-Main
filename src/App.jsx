@@ -10,6 +10,7 @@ import useAuthStore from './store/authStore';
 import ThemeToggle from './components/ui/ThemeToggle';
 import Sidebar from './components/ui/Sidebar';
 import ProtectedRoute from './components/ProtectedRoute';
+import AIAssistantSidebar from './components/chat/AIAssistantSidebar';
 
 // Pages
 import DashboardPage from './pages/DashboardPage';
@@ -75,7 +76,7 @@ function MainLayout({ children }) {
 
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Sidebar */}
+      {/* Left Sidebar */}
       <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       {/* Main Content */}
@@ -111,6 +112,9 @@ function MainLayout({ children }) {
           {children}
         </main>
       </div>
+
+      {/* Right AI Assistant Sidebar */}
+      <AIAssistantSidebar />
     </div>
   );
 }
