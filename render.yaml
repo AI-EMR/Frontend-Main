@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: aiemr-ui
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run preview
+    nodeVersion: 18.x
+    envVars:
+      - key: NODE_VERSION
+        value: 18.x
+      - key: NODE_ENV
+        value: production
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html 

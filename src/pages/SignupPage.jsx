@@ -7,6 +7,7 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const { signup } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [showDemoCredentials, setShowDemoCredentials] = useState(false);
   const [formData, setFormData] = useState({
     organizationName: '',
     organizationType: 'hospital', // hospital, clinic, etc.
@@ -18,6 +19,14 @@ const SignupPage = () => {
     adminFirstName: '',
     adminLastName: '',
   });
+
+  const demoCredentials = [
+    { role: 'Admin', email: 'admin@example.com', password: 'admin123' },
+    { role: 'Doctor', email: 'doctor@example.com', password: 'doctor123' },
+    { role: 'Nurse', email: 'nurse@example.com', password: 'nurse123' },
+    { role: 'Receptionist', email: 'receptionist@example.com', password: 'reception123' },
+    { role: 'Patient', email: 'patient@example.com', password: 'patient123' },
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -247,6 +256,59 @@ const SignupPage = () => {
             </div>
           </form>
         </div>
+      </div>
+
+      {/* Demo Credentials Floating Button */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <button
+          type="button"
+          onClick={() => setShowDemoCredentials(!showDemoCredentials)}
+          className="bg-primary-600 hover:bg-primary-700 text-white rounded-full p-3 shadow-lg flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+
+        {/* Demo Credentials Popup */}
+        {showDemoCredentials && (
+          <div className="absolute bottom-16 right-0 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 w-72 border border-gray-200 dark:border-gray-700">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Demo Credentials</h3>
+              <button
+                type="button"
+                onClick={() => setShowDemoCredentials(false)}
+                className="text-gray-400 hover:text-gray-500"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {demoCredentials.map((cred, index) => (
+                <div key={index} className="p-2 border border-gray-200 dark:border-gray-700 rounded-md">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{cred.role}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Email: {cred.email}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Password: {cred.password}</p>
+                    </div>
+                    <Link
+                      to="/login"
+                      className="text-xs bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-100 px-2 py-1 rounded-md hover:bg-primary-200 dark:hover:bg-primary-700"
+                    >
+                      Login
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 text-xs text-gray-500 dark:text-gray-400 italic">
+              Note: These are demo credentials for testing purposes only.
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
