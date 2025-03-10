@@ -19,57 +19,12 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import UnauthorizedPage from './pages/UnauthorizedPage';
 import StaffManagementPage from './pages/StaffManagementPage';
-
-// Placeholder pages
-const PatientsPage = () => (
-  <div className="bg-white dark:bg-gray-800 shadow-soft rounded-lg p-6">
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Patients</h2>
-    <p className="text-gray-600 dark:text-gray-300">
-      This page will display a list of patients and allow you to manage patient information.
-      The backend API integration will be added later.
-    </p>
-  </div>
-);
-
-const RecordsPage = () => (
-  <div className="bg-white dark:bg-gray-800 shadow-soft rounded-lg p-6">
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Medical Records</h2>
-    <p className="text-gray-600 dark:text-gray-300">
-      This page will display medical records and allow authorized users to create and edit records.
-      The backend API integration will be added later.
-    </p>
-  </div>
-);
-
-const AppointmentsPage = () => (
-  <div className="bg-white dark:bg-gray-800 shadow-soft rounded-lg p-6">
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Appointments</h2>
-    <p className="text-gray-600 dark:text-gray-300">
-      This page will display appointments and allow scheduling new appointments.
-      The backend API integration will be added later.
-    </p>
-  </div>
-);
-
-const AnalyticsPage = () => (
-  <div className="bg-white dark:bg-gray-800 shadow-soft rounded-lg p-6">
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Analytics</h2>
-    <p className="text-gray-600 dark:text-gray-300">
-      This page will display analytics and reports.
-      The backend API integration will be added later.
-    </p>
-  </div>
-);
-
-const SettingsPage = () => (
-  <div className="bg-white dark:bg-gray-800 shadow-soft rounded-lg p-6">
-    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Settings</h2>
-    <p className="text-gray-600 dark:text-gray-300">
-      This page will allow administrators to configure system settings.
-      The backend API integration will be added later.
-    </p>
-  </div>
-);
+import PatientsPage from './pages/PatientsPage';
+import RecordsPage from './pages/RecordsPage';
+import AppointmentsPage from './pages/AppointmentsPage';
+import AnalyticsPage from './pages/AnalyticsPage';
+import OrganizationSettingsPage from './pages/OrganizationSettingsPage';
+import SystemSettingsPage from './pages/SystemSettingsPage';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -312,12 +267,33 @@ function App() {
           />
           
           <Route
-            path="/settings"
+            path="/settings/organization"
             element={
               isAuthenticated ? (
-                <MainLayout>
-                  <SettingsPage />
-                </MainLayout>
+                role === 'admin' ? (
+                  <MainLayout>
+                    <OrganizationSettingsPage />
+                  </MainLayout>
+                ) : (
+                  <Navigate to="/unauthorized" />
+                )
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          
+          <Route
+            path="/settings/system"
+            element={
+              isAuthenticated ? (
+                role === 'admin' ? (
+                  <MainLayout>
+                    <SystemSettingsPage />
+                  </MainLayout>
+                ) : (
+                  <Navigate to="/unauthorized" />
+                )
               ) : (
                 <Navigate to="/login" />
               )
