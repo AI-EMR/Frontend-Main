@@ -52,6 +52,7 @@ html {
 }
 
 .body-large {
+  
   @apply text-lg leading-relaxed;
 }
 
